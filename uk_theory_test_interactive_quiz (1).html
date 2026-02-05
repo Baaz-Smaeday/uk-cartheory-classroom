@@ -1,0 +1,1097 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UK Driving Theory Test - Interactive Quiz</title>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #FF6B35;
+            --primary-dark: #E85A2A;
+            --secondary: #004E89;
+            --success: #06D6A0;
+            --danger: #EF476F;
+            --warning: #FFD23F;
+            --bg-dark: #1A1A2E;
+            --bg-light: #F8F9FA;
+            --text-dark: #2D3142;
+            --text-light: #FFFFFF;
+            --border: #E0E0E0;
+            --shadow: rgba(0, 0, 0, 0.1);
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            color: var(--text-dark);
+        }
+
+        .quiz-container {
+            background: white;
+            border-radius: 24px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 900px;
+            width: 100%;
+            overflow: hidden;
+            animation: slideIn 0.6s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .quiz-header {
+            background: linear-gradient(135deg, var(--secondary) 0%, var(--primary) 100%);
+            padding: 40px 30px;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .quiz-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+            animation: rotate 20s linear infinite;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .quiz-header h1 {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .quiz-header p {
+            font-size: 16px;
+            opacity: 0.9;
+            position: relative;
+            z-index: 1;
+        }
+
+        .progress-container {
+            padding: 20px 30px;
+            background: var(--bg-light);
+            border-bottom: 2px solid var(--border);
+        }
+
+        .progress-info {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--secondary);
+        }
+
+        .progress-bar {
+            height: 12px;
+            background: #E0E0E0;
+            border-radius: 20px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--success) 0%, var(--primary) 100%);
+            border-radius: 20px;
+            transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .progress-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            animation: shimmer 2s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        .question-container {
+            padding: 40px 30px;
+        }
+
+        .question-number {
+            display: inline-block;
+            background: var(--primary);
+            color: white;
+            padding: 8px 20px;
+            border-radius: 50px;
+            font-size: 14px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: scale(0.8);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .question-text {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 30px;
+            line-height: 1.5;
+            color: var(--text-dark);
+            animation: fadeIn 0.5s ease-out 0.1s backwards;
+        }
+
+        .question-image {
+            width: 100%;
+            max-height: 300px;
+            object-fit: cover;
+            border-radius: 16px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 24px var(--shadow);
+            animation: fadeIn 0.5s ease-out 0.2s backwards;
+        }
+
+        .options-container {
+            display: grid;
+            gap: 16px;
+        }
+
+        .option {
+            background: white;
+            border: 3px solid var(--border);
+            border-radius: 16px;
+            padding: 20px 24px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            font-size: 16px;
+            font-weight: 500;
+            position: relative;
+            overflow: hidden;
+            animation: slideInLeft 0.5s ease-out backwards;
+        }
+
+        .option:nth-child(1) { animation-delay: 0.3s; }
+        .option:nth-child(2) { animation-delay: 0.4s; }
+        .option:nth-child(3) { animation-delay: 0.5s; }
+        .option:nth-child(4) { animation-delay: 0.6s; }
+
+        @keyframes slideInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .option::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 0;
+            height: 100%;
+            background: linear-gradient(90deg, rgba(255, 107, 53, 0.1), rgba(0, 78, 137, 0.1));
+            transition: width 0.3s ease;
+            z-index: 0;
+        }
+
+        .option:hover::before {
+            width: 100%;
+        }
+
+        .option:hover {
+            border-color: var(--primary);
+            transform: translateX(8px);
+            box-shadow: 0 8px 24px var(--shadow);
+        }
+
+        .option-letter {
+            background: var(--secondary);
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 18px;
+            flex-shrink: 0;
+            transition: all 0.3s ease;
+            position: relative;
+            z-index: 1;
+        }
+
+        .option:hover .option-letter {
+            background: var(--primary);
+            transform: rotate(360deg);
+        }
+
+        .option-text {
+            flex: 1;
+            position: relative;
+            z-index: 1;
+        }
+
+        .option.selected {
+            border-color: var(--primary);
+            background: rgba(255, 107, 53, 0.05);
+        }
+
+        .option.selected .option-letter {
+            background: var(--primary);
+        }
+
+        .option.correct {
+            border-color: var(--success);
+            background: rgba(6, 214, 160, 0.1);
+            pointer-events: none;
+        }
+
+        .option.correct .option-letter {
+            background: var(--success);
+        }
+
+        .option.correct::after {
+            content: '✓';
+            position: absolute;
+            right: 24px;
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--success);
+            animation: checkmark 0.5s ease-out;
+        }
+
+        @keyframes checkmark {
+            0% {
+                opacity: 0;
+                transform: scale(0) rotate(-180deg);
+            }
+            50% {
+                transform: scale(1.2) rotate(10deg);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1) rotate(0deg);
+            }
+        }
+
+        .option.wrong {
+            border-color: var(--danger);
+            background: rgba(239, 71, 111, 0.1);
+            pointer-events: none;
+        }
+
+        .option.wrong .option-letter {
+            background: var(--danger);
+        }
+
+        .option.wrong::after {
+            content: '✗';
+            position: absolute;
+            right: 24px;
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--danger);
+            animation: crossmark 0.5s ease-out;
+        }
+
+        @keyframes crossmark {
+            0% {
+                opacity: 0;
+                transform: scale(0) rotate(180deg);
+            }
+            50% {
+                transform: scale(1.2) rotate(-10deg);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1) rotate(0deg);
+            }
+        }
+
+        .option.disabled {
+            pointer-events: none;
+            opacity: 0.6;
+        }
+
+        .explanation-container {
+            margin-top: 30px;
+            padding: 24px;
+            background: linear-gradient(135deg, rgba(6, 214, 160, 0.1) 0%, rgba(0, 78, 137, 0.1) 100%);
+            border-left: 6px solid var(--success);
+            border-radius: 12px;
+            animation: expandDown 0.5s ease-out;
+        }
+
+        @keyframes expandDown {
+            from {
+                opacity: 0;
+                max-height: 0;
+                padding-top: 0;
+                padding-bottom: 0;
+            }
+            to {
+                opacity: 1;
+                max-height: 500px;
+                padding-top: 24px;
+                padding-bottom: 24px;
+            }
+        }
+
+        .explanation-container.wrong {
+            background: linear-gradient(135deg, rgba(239, 71, 111, 0.1) 0%, rgba(255, 210, 63, 0.1) 100%);
+            border-left-color: var(--danger);
+        }
+
+        .explanation-title {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: var(--secondary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .explanation-title::before {
+            content: '💡';
+            font-size: 24px;
+        }
+
+        .explanation-text {
+            font-size: 16px;
+            line-height: 1.8;
+            color: var(--text-dark);
+        }
+
+        .explanation-text strong {
+            color: var(--secondary);
+            font-weight: 600;
+        }
+
+        .button-container {
+            padding: 30px;
+            display: flex;
+            gap: 16px;
+            justify-content: space-between;
+            border-top: 2px solid var(--border);
+        }
+
+        .btn {
+            padding: 16px 32px;
+            border: none;
+            border-radius: 50px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-family: 'Poppins', sans-serif;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .btn:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .btn span {
+            position: relative;
+            z-index: 1;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            flex: 1;
+            justify-content: center;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 32px rgba(255, 107, 53, 0.4);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-secondary {
+            background: white;
+            color: var(--secondary);
+            border: 3px solid var(--secondary);
+        }
+
+        .btn-secondary:hover {
+            background: var(--secondary);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(0, 78, 137, 0.3);
+        }
+
+        .results-container {
+            padding: 50px 30px;
+            text-align: center;
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        .results-icon {
+            font-size: 100px;
+            margin-bottom: 24px;
+            animation: bounce 1s ease-out;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {
+                transform: translateY(0);
+            }
+            40% {
+                transform: translateY(-30px);
+            }
+            60% {
+                transform: translateY(-15px);
+            }
+        }
+
+        .results-title {
+            font-size: 36px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            color: var(--secondary);
+        }
+
+        .results-score {
+            font-size: 72px;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--success) 0%, var(--primary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 24px;
+        }
+
+        .results-message {
+            font-size: 20px;
+            color: var(--text-dark);
+            margin-bottom: 16px;
+            line-height: 1.6;
+        }
+
+        .results-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 40px 0;
+        }
+
+        .result-card {
+            background: linear-gradient(135deg, rgba(0, 78, 137, 0.05) 0%, rgba(255, 107, 53, 0.05) 100%);
+            padding: 24px;
+            border-radius: 16px;
+            border: 2px solid var(--border);
+        }
+
+        .result-card-value {
+            font-size: 42px;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 8px;
+        }
+
+        .result-card-label {
+            font-size: 14px;
+            color: var(--text-dark);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .pass-message {
+            background: linear-gradient(135deg, var(--success) 0%, #04AA7C 100%);
+            color: white;
+            padding: 20px 32px;
+            border-radius: 16px;
+            font-size: 18px;
+            font-weight: 600;
+            margin: 24px 0;
+            box-shadow: 0 8px 24px rgba(6, 214, 160, 0.3);
+        }
+
+        .fail-message {
+            background: linear-gradient(135deg, var(--danger) 0%, #D83A5C 100%);
+            color: white;
+            padding: 20px 32px;
+            border-radius: 16px;
+            font-size: 18px;
+            font-weight: 600;
+            margin: 24px 0;
+            box-shadow: 0 8px 24px rgba(239, 71, 111, 0.3);
+        }
+
+        .review-container {
+            text-align: left;
+            margin-top: 40px;
+        }
+
+        .review-question {
+            background: white;
+            border: 2px solid var(--border);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .review-question:hover {
+            box-shadow: 0 8px 24px var(--shadow);
+            transform: translateY(-4px);
+        }
+
+        .review-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .review-number {
+            font-weight: 700;
+            color: var(--secondary);
+            font-size: 16px;
+        }
+
+        .review-status {
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .review-status.correct {
+            background: var(--success);
+            color: white;
+        }
+
+        .review-status.wrong {
+            background: var(--danger);
+            color: white;
+        }
+
+        .review-text {
+            font-size: 16px;
+            color: var(--text-dark);
+            margin-bottom: 12px;
+            font-weight: 500;
+        }
+
+        .review-answer {
+            font-size: 14px;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 8px;
+        }
+
+        .review-answer.your-answer {
+            background: rgba(239, 71, 111, 0.1);
+            border-left: 4px solid var(--danger);
+        }
+
+        .review-answer.correct-answer {
+            background: rgba(6, 214, 160, 0.1);
+            border-left: 4px solid var(--success);
+        }
+
+        @media (max-width: 768px) {
+            .quiz-header h1 {
+                font-size: 24px;
+            }
+
+            .question-text {
+                font-size: 20px;
+            }
+
+            .option {
+                padding: 16px 20px;
+            }
+
+            .results-score {
+                font-size: 56px;
+            }
+
+            .button-container {
+                flex-direction: column;
+            }
+        }
+
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="quiz-container">
+        <div class="quiz-header">
+            <h1>🚗 UK Driving Theory Test</h1>
+            <p>Test your knowledge with realistic DVLA-style questions</p>
+        </div>
+
+        <div class="progress-container">
+            <div class="progress-info">
+                <span>Progress: <span id="currentQuestion">1</span> / <span id="totalQuestions">26</span></span>
+                <span>Score: <span id="score">0</span> / <span id="attempted">0</span></span>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressBar"></div>
+            </div>
+        </div>
+
+        <div class="question-container" id="questionContainer">
+            <!-- Questions will be loaded here -->
+        </div>
+
+        <div class="button-container" id="buttonContainer">
+            <button class="btn btn-secondary" id="prevBtn" onclick="previousQuestion()">
+                <span>← Previous</span>
+            </button>
+            <button class="btn btn-primary" id="submitBtn" onclick="submitAnswer()" disabled>
+                <span id="submitBtnText">Submit Answer</span>
+            </button>
+            <button class="btn btn-primary" id="nextBtn" onclick="nextQuestion()" style="display: none;">
+                <span>Next Question →</span>
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // Quiz data
+        const quizData = [
+            {
+                question: "Before executing a U-turn maneuver, what is the most important action?",
+                options: [
+                    "Use both indicator and arm signal together",
+                    "Select a higher gear for better control",
+                    "Check over your shoulder as a final safety check",
+                    "Verify that road markings permit U-turns"
+                ],
+                correct: 2,
+                explanation: "When performing a U-turn, you must ensure the maneuver is safe and legal. After checking mirrors and road markings, a final over-the-shoulder check is essential to see any vehicles or road users in your blind spot before committing to the turn. <strong>Why this matters:</strong> Blind spots cannot be seen in mirrors alone. A physical check prevents collisions with motorcyclists, cyclists, or vehicles you might have missed. <strong>In India vs UK:</strong> While both countries drive on the left, UK roads have stricter observation requirements and penalties for unsafe maneuvers."
+            },
+            {
+                question: "When approaching a narrow hump-back bridge with a warning sign, what should you do?",
+                image: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 300'%3E%3Crect fill='%2387CEEB' width='400' height='300'/%3E%3Cpath fill='%23228B22' d='M0 250 Q200 200 400 250 L400 300 L0 300 Z'/%3E%3Cpath fill='%23696969' d='M150 250 Q200 220 250 250'/%3E%3Cpath fill='%23ADD8E6' d='M100 240 L140 240 L140 250 L100 250 Z'/%3E%3Cpath fill='%23FFD700' d='M50 100 L80 160 L20 160 Z'/%3E%3Ctext x='50' y='140' font-size='20' fill='%23000' font-weight='bold'%3E!%3C/text%3E%3C/svg%3E",
+                options: [
+                    "Reduce your speed",
+                    "Maintain 30 mph speed",
+                    "Change to a lower gear",
+                    "Position yourself to the right"
+                ],
+                correct: 0,
+                explanation: "Hump bridges often have limited visibility over the crest and may be too narrow for two vehicles to pass safely. <strong>Key dangers:</strong> You cannot see oncoming traffic until you're at the peak, pedestrians may be using the road due to no footpaths, and the road width may only accommodate one vehicle. <strong>Correct action:</strong> Slow down significantly, be prepared to stop, look for the 'oncoming vehicles in middle of road' warning sign, and be ready to give way if needed. <strong>Speed vs Safety:</strong> Even if the speed limit is 30 mph, you should drive at a speed that allows you to stop safely for what you can see ahead."
+            },
+            {
+                question: "In which situation should you NOT attempt to overtake another vehicle?",
+                options: [
+                    "When approaching a dip in the road",
+                    "On a dual carriageway",
+                    "On a one-way street",
+                    "Immediately after a bend"
+                ],
+                correct: 0,
+                explanation: "Road dips create 'dead ground' where oncoming vehicles are completely hidden from view until they're very close. <strong>The hazard:</strong> A car could be traveling at 60 mph in the hidden dip, giving you less than 2 seconds to react. You cannot judge the speed or distance of hidden vehicles. <strong>Safe overtaking requires:</strong> Clear visibility of the entire overtaking distance, ability to see no vehicles are approaching, enough space to complete the maneuver, and confirmation that the vehicle ahead isn't about to turn. <strong>Remember:</strong> If you can't see, don't go. Other dangerous overtaking locations include approaching junctions, bends, pedestrian crossings, and before the brow of a hill."
+            },
+            {
+                question: "A curved white arrow painted on the road surface indicates what?",
+                image: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 300'%3E%3Crect fill='%23556B2F' width='400' height='300'/%3E%3Cpath fill='%23696969' d='M0 150 L400 150 L400 300 L0 300 Z'/%3E%3Cpath fill='%23FFD700' stroke='%23000' stroke-width='2' d='M100 200 Q150 150 200 200' fill='none'/%3E%3Cpath fill='%23FFD700' d='M190 185 L200 200 L180 200 Z'/%3E%3Cpath fill='%23FFF' d='M250 150 L300 150 L300 300 L250 300 Z'/%3E%3C/svg%3E",
+                options: [
+                    "Heavy vehicles must take the next left turn to avoid weight restrictions",
+                    "The road surface slopes to the left",
+                    "Vehicles that have overtaken must return to the left lane",
+                    "A left bend is ahead"
+                ],
+                correct: 2,
+                explanation: "Curved arrow markings are directional instructions showing which way traffic must flow. <strong>Where you'll see them:</strong> After hatched road markings (diagonal white stripes), after overtaking past solid double white lines (when permitted), at the end of overtaking lanes, and under low bridges directing high vehicles. <strong>Why they're important:</strong> They legally require you to follow the direction shown - not doing so is a traffic offense. They help maintain traffic flow and prevent head-on collisions. <strong>Hatched markings:</strong> White diagonal stripes are used to separate traffic lanes or protect traffic turning right. Bordered by a solid line means you MUST NOT enter except in emergency. Bordered by a broken line means you should not enter unless safe to do so."
+            },
+            {
+                question: "What should you do if your mobile phone rings while you're driving?",
+                options: [
+                    "Stop your vehicle immediately wherever you are",
+                    "Answer the call right away using speakerphone",
+                    "Wait until you've parked safely before answering",
+                    "Pull up at the nearest curb regardless of restrictions"
+                ],
+                correct: 2,
+                explanation: "Using a hand-held mobile phone while driving is illegal in the UK and carries serious penalties. <strong>The law:</strong> 6 penalty points and a £200 fine for phone use while driving. Newly qualified drivers can lose their license. It's illegal even when stopped in traffic or at traffic lights. Only exception is genuine emergency to call 999/112. <strong>Why it's dangerous:</strong> Reaction times are 50% slower than alcohol limit, you're 4 times more likely to crash, mental distraction persists even with hands-free, and you miss visual clues about hazards developing. <strong>Safe approach:</strong> Switch phone to silent or off before starting journey, use voicemail to catch calls, if you must take a call - find a safe, legal parking spot and turn off the engine. <strong>Hands-free is legal but risky:</strong> The conversation still distracts your attention and you can still be prosecuted if you're not in proper control of the vehicle."
+            },
+            {
+                question: "What is the purpose of yellow lines painted across the road approaching a roundabout or junction?",
+                image: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 300'%3E%3Crect fill='%2387CEEB' width='400' height='300'/%3E%3Cpath fill='%23696969' d='M0 200 L400 200 L400 300 L0 300 Z'/%3E%3Crect fill='%23FFD700' x='0' y='190' width='400' height='8'/%3E%3Crect fill='%23FFD700' x='0' y='170' width='400' height='8'/%3E%3Crect fill='%23FFD700' x='0' y='145' width='400' height='8'/%3E%3Crect fill='%23FFD700' x='0' y='115' width='400' height='8'/%3E%3Ctext x='200' y='50' font-size='24' fill='%23000' text-anchor='middle' font-weight='bold'%3ERoundabout Ahead%3C/text%3E%3C/svg%3E",
+                options: [
+                    "To indicate the distance to the roundabout",
+                    "To increase your awareness of your current speed",
+                    "To help maintain proper following distance from the vehicle ahead",
+                    "To assist with choosing the correct lane"
+                ],
+                correct: 1,
+                explanation: "These transverse yellow lines (also called rumble markings or countdown markings) get progressively closer together as you approach the hazard. <strong>How they work:</strong> If the lines appear to 'flash' quickly under your wheels, you're going too fast. The faster you're traveling, the quicker the lines pass, creating a visual speed warning. They give you time to assess and adjust your speed safely. <strong>Typical locations:</strong> Approaches to roundabouts, dangerous junctions, sharp bends, and toll booths. <strong>Why not just a speed limit sign?</strong> These markings provide continuous feedback about your speed relative to the hazard. A sign is a one-time message; these markings actively remind you throughout your approach. <strong>Good driving practice:</strong> When you see these markings, start checking your mirrors, assessing the hazard ahead, and smoothly reducing speed. This demonstrates anticipation and planning - key skills for the practical test."
+            },
+            {
+                question: "When traffic lights have been showing green for an extended period, what should you do?",
+                options: [
+                    "Accelerate to pass through quickly before they change",
+                    "Continue at the same speed without adjustment",
+                    "Prepare to stop as they're likely to change soon",
+                    "Brake firmly to stop immediately"
+                ],
+                correct: 2,
+                explanation: "Traffic lights follow a set sequence and timing. The longer lights have been green, the sooner they'll change to amber and red. <strong>Signal sequence (UK):</strong> Red (stop) → Red + Amber (prepare to go) → Green (go if safe) → Amber (stop unless unsafe to do so) → Red. <strong>Why anticipation matters:</strong> Amber means STOP unless you've crossed the stop line or stopping would cause an accident. Many crashes occur when drivers speed up to 'beat' the lights. Anticipating the change prevents harsh braking that could cause rear-end collisions. <strong>Best practice:</strong> As you approach, assess how long the lights have been green. If green for a while, ease off the accelerator and cover the brake. Be prepared to stop smoothly. Check mirrors to see what's behind you. <strong>Never:</strong> Speed up to 'make it through', assume lights will stay green, brake harshly at the last moment. <strong>Amber gambling:</strong> Entering on amber is technically legal if you've crossed the stop line, but it's dangerous and discouraged. Traffic cameras may capture you if you enter on late amber or early red."
+            },
+            {
+                question: "What should you do before reducing speed or stopping your vehicle?",
+                options: [
+                    "Flash your headlights to warn others",
+                    "Sound your horn to alert nearby vehicles",
+                    "Check your mirrors to see what's behind",
+                    "Change to a higher gear for control"
+                ],
+                correct: 2,
+                explanation: "The Mirror-Signal-Maneuver (MSM) routine is fundamental to safe driving in the UK. <strong>Why check mirrors before slowing:</strong> The vehicle behind might be close and not expecting you to brake. A motorcyclist might be overtaking. Understanding what's behind influences how hard you can brake safely. <strong>The MSM routine:</strong> <strong>Mirrors</strong> - check what's behind and to the sides. <strong>Signal</strong> - if your action will affect others, signal your intention. <strong>Maneuver</strong> - carry out the action safely. <strong>When to check mirrors:</strong> Before signaling, before slowing down or stopping, before changing direction, before speeding up, regularly throughout your journey (every 8-10 seconds). <strong>Which mirrors to check:</strong> Interior mirror shows directly behind, door mirrors show the lanes beside you and blind spots, check the relevant side mirror before turning. <strong>Common mistakes:</strong> Only checking mirrors after starting to slow down, signaling before checking mirrors (you might not be able to turn if something is there), forgetting to check mirrors regularly. <strong>Remember:</strong> Mirrors are for observation. You still need to check blind spots by looking over your shoulder before major maneuvers."
+            },
+            {
+                question: "Why should you maintain a safe distance when following a large goods vehicle?",
+                options: [
+                    "To be able to corner more effectively",
+                    "To reduce wind resistance and save fuel",
+                    "To ensure the driver can see you in their mirrors",
+                    "To help the large vehicle stop more quickly"
+                ],
+                correct: 2,
+                explanation: "Large vehicles have significant blind spots where their mirrors cannot see smaller vehicles. <strong>The danger zones:</strong> Directly behind the vehicle - the driver cannot see you at all. Close behind but visible - you're in the blind spot if you can't see the driver's face in their mirrors. Either side near the cab - difficult for driver to see. <strong>Safe following distance benefits:</strong> The driver can see you in their mirrors. You can see the road ahead around the vehicle. You have more time to react to hazards. You won't be hit by debris or stones thrown up. You can see the vehicle's signals and brake lights clearly. <strong>How far back?</strong> Use the two-second rule minimum (four seconds in wet conditions). On motorways, stay even further back to see multiple vehicles ahead. <strong>Why large vehicles need space:</strong> They take much longer to stop (up to twice as long as a car). They need more room to maneuver, especially when turning. Their load might extend beyond the vehicle. Spray in wet weather reduces visibility. <strong>Overtaking large vehicles:</strong> Only overtake when you have clear visibility. Expect the vehicle to take longer to pass. Move back to your lane only when you can see the entire vehicle in your mirror."
+            },
+            {
+                question: "Why should you check your mirrors when you spot a hazard ahead?",
+                options: [
+                    "Because you'll need to brake sharply and stop immediately",
+                    "To see what's happening on the road ahead of you",
+                    "To understand how your response will affect vehicles behind",
+                    "Because you'll need to accelerate out of danger"
+                ],
+                correct: 2,
+                explanation: "Hazard awareness is about making safe decisions that consider all road users, not just what's ahead. <strong>Why check mirrors when seeing a hazard:</strong> You need to know if you can brake safely - is someone too close behind? Can you change lanes to avoid the hazard? Is a vehicle overtaking you? Should you signal to warn drivers behind? <strong>Examples in practice:</strong> <strong>Hazard: Child's ball rolls into road</strong> - Check mirrors → If car close behind, sound horn and brake carefully → If clear, brake harder. <strong>Hazard: Debris in your lane</strong> - Check mirrors → Can you change lanes? → Signal and move if safe, or slow down if not. <strong>Hazard: Vehicle ahead braking</strong> - Check mirrors → Tap brake pedal to flash brake lights as warning → Slow down smoothly. <strong>The thinking process:</strong> Spot hazard → Check mirrors → Assess options → Choose safest response → Take action. <strong>Common mistakes:</strong> Only looking ahead and ignoring what's behind, assuming you can brake as hard as needed, changing lanes without checking if space is available, not using your brake lights to warn following drivers. <strong>Advanced tip:</strong> Early hazard detection means gentler, safer responses. Late detection forces harsh reactions that are dangerous for everyone."
+            }
+        ];
+
+        let currentQuestionIndex = 0;
+        let selectedAnswers = [];
+        let scores = [];
+
+        // Initialize quiz
+        function initQuiz() {
+            selectedAnswers = new Array(quizData.length).fill(null);
+            scores = new Array(quizData.length).fill(null);
+            loadQuestion();
+            updateProgress();
+        }
+
+        // Load current question
+        function loadQuestion() {
+            const question = quizData[currentQuestionIndex];
+            const container = document.getElementById('questionContainer');
+            
+            let html = `
+                <div class="question-number">Question ${currentQuestionIndex + 1} of ${quizData.length}</div>
+                <div class="question-text">${question.question}</div>
+            `;
+
+            if (question.image) {
+                html += `<img src="${question.image}" alt="Question illustration" class="question-image">`;
+            }
+
+            html += '<div class="options-container">';
+            question.options.forEach((option, index) => {
+                const letter = String.fromCharCode(65 + index);
+                const isSelected = selectedAnswers[currentQuestionIndex] === index;
+                const isAnswered = scores[currentQuestionIndex] !== null;
+                const isCorrect = question.correct === index;
+                
+                let optionClass = 'option';
+                if (isAnswered) {
+                    optionClass += ' disabled';
+                    if (isCorrect) {
+                        optionClass += ' correct';
+                    } else if (isSelected) {
+                        optionClass += ' wrong';
+                    }
+                } else if (isSelected) {
+                    optionClass += ' selected';
+                }
+
+                html += `
+                    <div class="${optionClass}" onclick="selectOption(${index})">
+                        <div class="option-letter">${letter}</div>
+                        <div class="option-text">${option}</div>
+                    </div>
+                `;
+            });
+            html += '</div>';
+
+            // Show explanation if answered
+            if (scores[currentQuestionIndex] !== null) {
+                const isCorrect = scores[currentQuestionIndex] === 1;
+                html += `
+                    <div class="explanation-container ${isCorrect ? '' : 'wrong'}">
+                        <div class="explanation-title">
+                            ${isCorrect ? 'Correct Answer!' : 'Incorrect - Learn Why'}
+                        </div>
+                        <div class="explanation-text">${question.explanation}</div>
+                    </div>
+                `;
+            }
+
+            container.innerHTML = html;
+            updateButtons();
+        }
+
+        // Select an option
+        function selectOption(index) {
+            if (scores[currentQuestionIndex] !== null) return; // Already answered
+
+            selectedAnswers[currentQuestionIndex] = index;
+            loadQuestion();
+        }
+
+        // Submit answer
+        function submitAnswer() {
+            if (selectedAnswers[currentQuestionIndex] === null) return;
+
+            const question = quizData[currentQuestionIndex];
+            const isCorrect = selectedAnswers[currentQuestionIndex] === question.correct;
+            scores[currentQuestionIndex] = isCorrect ? 1 : 0;
+
+            loadQuestion();
+            updateProgress();
+        }
+
+        // Next question
+        function nextQuestion() {
+            if (currentQuestionIndex < quizData.length - 1) {
+                currentQuestionIndex++;
+                loadQuestion();
+                updateProgress();
+            } else {
+                showResults();
+            }
+        }
+
+        // Previous question
+        function previousQuestion() {
+            if (currentQuestionIndex > 0) {
+                currentQuestionIndex--;
+                loadQuestion();
+                updateProgress();
+            }
+        }
+
+        // Update progress bar and scores
+        function updateProgress() {
+            document.getElementById('currentQuestion').textContent = currentQuestionIndex + 1;
+            document.getElementById('totalQuestions').textContent = quizData.length;
+            
+            const attempted = scores.filter(s => s !== null).length;
+            const correct = scores.filter(s => s === 1).length;
+            
+            document.getElementById('attempted').textContent = attempted;
+            document.getElementById('score').textContent = correct;
+
+            const progress = ((currentQuestionIndex + 1) / quizData.length) * 100;
+            document.getElementById('progressBar').style.width = progress + '%';
+        }
+
+        // Update button states
+        function updateButtons() {
+            const prevBtn = document.getElementById('prevBtn');
+            const submitBtn = document.getElementById('submitBtn');
+            const nextBtn = document.getElementById('nextBtn');
+
+            prevBtn.disabled = currentQuestionIndex === 0;
+            
+            const hasSelected = selectedAnswers[currentQuestionIndex] !== null;
+            const isAnswered = scores[currentQuestionIndex] !== null;
+
+            if (isAnswered) {
+                submitBtn.style.display = 'none';
+                nextBtn.style.display = 'flex';
+                
+                if (currentQuestionIndex === quizData.length - 1) {
+                    nextBtn.querySelector('span').textContent = 'View Results →';
+                } else {
+                    nextBtn.querySelector('span').textContent = 'Next Question →';
+                }
+            } else {
+                submitBtn.style.display = 'flex';
+                submitBtn.disabled = !hasSelected;
+                nextBtn.style.display = 'none';
+            }
+        }
+
+        // Show final results
+        function showResults() {
+            const totalScore = scores.filter(s => s === 1).length;
+            const percentage = Math.round((totalScore / quizData.length) * 100);
+            const passed = percentage >= 86; // 43/50 = 86%
+
+            let resultsHTML = `
+                <div class="results-container">
+                    <div class="results-icon">${passed ? '🎉' : '📚'}</div>
+                    <h2 class="results-title">${passed ? 'Congratulations!' : 'Keep Learning!'}</h2>
+                    <div class="results-score">${percentage}%</div>
+                    <p class="results-message">
+                        You scored ${totalScore} out of ${quizData.length} questions correctly
+                    </p>
+                    
+                    ${passed ? 
+                        '<div class="pass-message">✓ You\'ve PASSED! You\'re ready for the real test. Keep practicing to maintain your knowledge!</div>' :
+                        '<div class="fail-message">✗ You need 86% (43/50) to pass. Review the explanations and try again!</div>'
+                    }
+                    
+                    <div class="results-details">
+                        <div class="result-card">
+                            <div class="result-card-value">${totalScore}</div>
+                            <div class="result-card-label">Correct</div>
+                        </div>
+                        <div class="result-card">
+                            <div class="result-card-value">${quizData.length - totalScore}</div>
+                            <div class="result-card-label">Incorrect</div>
+                        </div>
+                        <div class="result-card">
+                            <div class="result-card-value">${percentage}%</div>
+                            <div class="result-card-label">Score</div>
+                        </div>
+                    </div>
+
+                    <div class="review-container">
+                        <h3 style="margin-bottom: 20px; color: var(--secondary); font-size: 24px;">Review Your Answers</h3>
+            `;
+
+            quizData.forEach((q, index) => {
+                const isCorrect = scores[index] === 1;
+                const userAnswer = selectedAnswers[index];
+                
+                resultsHTML += `
+                    <div class="review-question">
+                        <div class="review-header">
+                            <div class="review-number">Question ${index + 1}</div>
+                            <div class="review-status ${isCorrect ? 'correct' : 'wrong'}">
+                                ${isCorrect ? '✓ Correct' : '✗ Incorrect'}
+                            </div>
+                        </div>
+                        <div class="review-text">${q.question}</div>
+                        ${!isCorrect ? `
+                            <div class="review-answer your-answer">
+                                <strong>Your answer:</strong> ${q.options[userAnswer]}
+                            </div>
+                        ` : ''}
+                        <div class="review-answer correct-answer">
+                            <strong>Correct answer:</strong> ${q.options[q.correct]}
+                        </div>
+                    </div>
+                `;
+            });
+
+            resultsHTML += `
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('questionContainer').innerHTML = resultsHTML;
+            document.getElementById('buttonContainer').innerHTML = `
+                <button class="btn btn-primary" onclick="location.reload()" style="width: 100%;">
+                    <span>🔄 Restart Quiz</span>
+                </button>
+            `;
+        }
+
+        // Initialize quiz on load
+        window.onload = initQuiz;
+    </script>
+</body>
+</html>
